@@ -6,7 +6,81 @@ date: 10/13/2020
 
 ```{r setup}
 library(tidyverse)
-
 library(p8105.datasets)
+library(leaflet)
+
+knitr::opts_chunk$set(
+  fig.width = 6,
+  fig.asp = .6,
+  out.width = "90%"
+)
+
+options(
+  ggplot2.continuous.color = "viridis",
+  ggplot2.continuous.fill = "viridis"
+)
+
+scale_colour_discrete = scale_color_viridis_d
+scale_fill_discrete = scale_fill_viridis_d
+```
+
+## Load AirBnB data
+```{r setup}
 data(nyc_airbnb)
 ```
+
+## Answer some questions
+
+```{r}
+nyc_airbnb %>% 
+  count(neighbourhood_group, room_type) %>% 
+  pivot_wider(names_from = room_type, values_from = n)
+```
+
+```{r}
+head(nyc_airbnb)
+
+nyc_airbnb %>% 
+  mutate(
+    neighbourhood_group = as.factor(neighbourhood_group),
+    room_type = as.factor(room_type)
+  ) %>% 
+  group_by(neighbourhood_group, room_type) %>%
+  summarize(mean_price = mean(price))
+```
+
+```{r}
+nyc_airbnb %>% 
+  filter(neighbourhood_group == "Manhattan") %>% 
+  count(neighbourhood)
+
+nyc_airbnb %>% 
+  filter(
+    price < 1000,
+    neighbourhood_group == "Manhattan"
+  ) %>% 
+  mutate(
+    neighbourhood = fct_reorder(neighbourhood, price)
+  ) %>% 
+  ggplot(aes(x = neighbourhood, y = price)) + 
+  geom_boxplot() + 
+  coord_flip()
+```
+
+```{r}
+nyc_airbnb %>% 
+  sample_n(1000) %>% 
+  ggplot(aes(x = lat, y = long, color = price)) + 
+  geom_point()
+```
+
+## Creating a leaflet map
+
+```{r}
+nyc_airbnb %>% 
+  sample_n(10) %>% 
+  leaflet() %>% 
+  addTiles() %>% 
+  addMarkers(~lat, ~long)
+```
+
