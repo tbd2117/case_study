@@ -1,0 +1,12 @@
+---
+title: "Case_Study"
+output: github_document
+date: 10/13/2020
+---
+
+```{r setup}
+library(tidyverse)
+
+library(p8105.datasets)
+data(nyc_airbnb)
+```
